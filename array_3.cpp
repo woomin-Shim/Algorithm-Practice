@@ -1,28 +1,38 @@
-#include <cstdio>
 #include <iostream>
 using namespace std;
 
 int main() {
-	int n, plus = 1, plus2 = 0;
-	int jnum = 0, inum = 1;
+	int n, c,  x, y, num=1;
 	cin >> n;
-	int arr[5][5];
-	arr[0][0] = 1;
+
+	int** arr = new int* [n];
+	for (int i = 0; i < n; ++i)
+		arr[i] = new int[n];
+	
+	/*for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n - i; j++) {
+			arr[i][j] = 0;
+		}
+	} */
+
 	for (int i = 0; i < n; i++) {
-		jnum += plus;
-		arr[i][0] = jnum;
-		plus++;
-		plus2 =i+1;
-		inum = arr[i][0];
-		for (int j = 1; j < n - i; j++) {
-			inum = inum + plus2;
-			arr[i][j] = inum;
-			plus2++;
+		x = i;
+		y = 0;
+		for (int j = 0; j <= i; j++) {
+			arr[y][x] = num;
+			num++;
+			y++;
+			x--;
 		}
 	}
 	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n - i; j++)
-			cout << arr[i][j];
+		for (int j = 0; j < n-i; j++)
+			cout << arr[i][j] << ' ';
 		cout << "\n";
 	}
+	
+	for (int i = 0; i < n; i++)
+		delete[] arr[i];
+	delete[] arr;
+
 }
