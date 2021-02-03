@@ -8,32 +8,27 @@ using namespace std;
 int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0);
-	int arr[9][9];
-	
-	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 9; j++)
-			cin >> arr[i][j];
-	}
+	int num, big=0, ry, rx;
+	for (int i = 1; i <= 9; i++) {
+		for (int j = 1; j <= 9; j++) {
+			cin >> num;
 
-	int big = 0, ry, rx; //ry 행, rx열 
-	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 9; j++) {
-			if (arr[i][j] > big) {
-				big = arr[i][j]; //Max
-				ry = i;
-				rx = j;
+			if (num > big) {
+				big = num;
+				ry = i;  //행
+ 				rx = j;  //열
 			}
-			else if (arr[i][j] == big) {  
-				if (i < ry)
+
+			//else if 구문 없어도 전혀 문제 X
+			else if (big == num) {
+				if (i < ry || (ry == i && j < rx)) {
 					ry = i;
-				else if(i == ry) {
-					if (j < rx)
-						rx = j;
+					rx = j;
 				}
 			}
 		}
 	}
 	cout << big << "\n";
-	cout << ry+1 << ' ' << rx+1;
+	cout << ry << ' ' << rx;
 
 }
