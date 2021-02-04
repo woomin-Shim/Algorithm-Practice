@@ -8,41 +8,47 @@ using namespace std;
 int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0);
-	int arr[9][9], ky=0, kx=0, ry, rx, cnt=1, ry2, rx2, result=0;
+	int arr[9][9], ry[2] , rx[2], cnt = 0, result = 0;
+	for (int i = 0; i < 2; i++) {
+		ry[i] = 0;
+		rx[i] = 0;
+	}
+
 	for (int i = 1; i < 9; i++) {
 		for (int j = 1; j < 9; j++) {
 			cin >> arr[i][j];
 
-			if (arr[i][j] == 1) { //King Coordinate
-				ky = i;
-				kx = j;
-			}
-			if (arr[i][j] == 2) { //rook Coordinate
-				ry = i, rx = j;
+			if (arr[i][j] == 2) { //Rook Coordinate 
+				ry[cnt] = i;
+				rx[cnt] = j;
 				cnt++;
-			}
-			if (cnt == 2) {
-				if (arr[i][j] == 2)
-					ry2 = i, rx2 = j;
 			}
 		}
 	}
-	for (int i = rx + 1; i < 9; i++) {
-		if (arr[ry][i] == 1) result = 1;
-		else if (arr[ry][i] == 3) break;
+	
+	bool flag = false;
+	int ry1, rx1;
+	for (int k = 0; k <2; k++) {
+		ry1 = ry[k];
+		rx1 = rx[k];
+		for (int i = rx1 + 1; i < 9; i++) {
+			if (arr[ry1][i] == 1) flag = true;
+			else if (arr[ry1][i] == 3) break;
+		}
+		for (int i = rx1 - 1; i > 0; i--) {
+			if (arr[ry1][i] == 1)flag = true;
+			else if (arr[ry1][i] == 3) break;
+		}
+		for (int i = ry1 + 1; i < 9; i++) {
+			if (arr[i][rx1] == 1) flag = true;
+			else if (arr[i][rx1] == 3) break;
+		}
+		for (int i = ry1 - 1; i > 0; i--) {
+			if (arr[i][rx1] == 1) flag = true;
+			else if (arr[i][rx1] == 3) break;
+		}
 	}
-	for (int i = rx - 1; i > 0; i--) {
-		if (arr[ry][i] == 1)result = 1;
-		else if (arr[ry][i] == 3) break;
-	}
-	for (int i = ry + 1; i < 9; i++) {
-		if (arr[i][rx] == 1) result = 1;
-		else if (arr[i][rx] == 3) break;
-	}
-	for (int i = ry - 1; i > 0; i--) {
-		if (arr[i][rx] == 1) result = 1;
-		else if (arr[i][rx] == 3) break;
-	}
-
-	cout << result;
+	
+	if (flag) cout << "1\n";
+	else cout << 0;
 }
