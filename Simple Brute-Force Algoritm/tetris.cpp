@@ -1,8 +1,13 @@
 #include <iostream>
 using namespace std;
 
-//가장 깊은 곳 찾고, 그곳을 1으로 채운다. 그러면 수평선의 개수를 알 수 있다. 
+/*각 열마다 1*4의 격자가 들어갈 수 있는지 먼저 검사 후 
+  들어가지 못하면 0을 출력하고 들어가게 되면 그 열을 1로 채우고 
+  모든 행렬을 검사하여 만족하는 수평선의 개수를 세면 된다. 
+  중요한 것은 1로 채우고 난후 수평선의 개수를 세고 다시 1로 채운 부분을 0으로 초기화해야함 */
 int map[20][20];
+int arr[20];
+int num[20];
 int main() {
 	int c, r;
 	cin >> c >> r;
@@ -12,47 +17,43 @@ int main() {
 		}
 	}
 
-	int big = 0, X = 0;
+	int X = 0, Y = 0;
 	for (int i = 1; i <= c; i++) {//row   c:6 r:7
 		int cnt = 0;
 		for (int j = 1; j <= r; j++) { //column
-			if (map[j][i] == 0) {
-				cnt++;
-			}
-			else if (map[j][i] == 1) {
+			if (map[j][i] == 1) {
 				break;
 			}
+			else {
+				cnt++;
+			}
+			arr[i] = cnt;   // 2 2 2 7 4 2
 		}
-		if (big < cnt)
-			big = cnt, X = i; //가장 깊은곳의 열인덱스
 	}
 
-	int idx = 0, idx2 = 0;
-	for (int i = 1; i <= r; i++) {
-		if (map[i][X] == 1) {
-			idx2 = i;
-			break;
+	for (int i = 1; i <= c; i++) {
+		if (arr[i] < 4) {
+			X = 0; Y = 0;
 		}
 		else {
-			map[i][X] = 1;
-			idx++;
+			for (int j = 1; j <= arr[i]; j++)
+				map[j][i] = 1;
+			for (int k = 1; k <= r; k++) {  //1로 채우고 수평선의 개수를 num[]에 담는다. 
+				int sum = 0;
+				for (int p = 1; p <= c; p++) {
+					sum += map[k][p];
+				}
+				if (sum == c) num[i]++;
+			}
+			for (int j = 1; j <= arr[i]; j++)  //1로 채웠던 부분을 0으로 다시 초기화 
+				map[j][i] = 0;
 		}
 	}
-
-	int y = 0;
-	for (int i = 1; i <= r; i++) {
-		int sum = 0;
-		for (int j = 1; j <= c; j++) {
-			sum += map[i][j];
-		}
-		if (sum == c) {
-			y++;
-		}
+	int big = num[0];
+	for (int i = 1; i <= c; i++) {
+		if (big < num[i])
+			big = num[i], X = i;
 	}
-	if ((r - idx2 + 1) + 4 > r) {
-		X = 0, y = 0;
-		cout << X << ' ' << y;
-	}
-	else
-		cout << X << ' ' << y;
+	
+	cout << X << ' ' << big << "\n";
 }
