@@ -23,6 +23,6 @@ int main() {
 		arr[idx] = temp;
 	}
 
-	cout << arr[k];
+	cout << arr[k-1];
 
 }
