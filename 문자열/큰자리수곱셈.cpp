@@ -28,8 +28,8 @@ int main() {
 		for (int j = 199; j > 0; j--) {
 			result[i - t] += (num[j] * num2[i]);
 			if (result[i] > 9) {
-				result[i - 1 - t] += result[i - t] / 10;
-				result[i - t] = result[i - t] % 10;
+				result[i - 1] += result[i] / 10;
+				result[i] = result[i] % 10;
 			}
 			t++;
 		}
