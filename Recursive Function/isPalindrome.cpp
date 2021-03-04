@@ -5,10 +5,16 @@ using namespace std;
 bool isPalindrome(char s[], int start, int end) {
 	// if s[] is from the start to the end of a palindrome == true,  else == false
 
-	//cout << start << ' ' << end << "\n";  (기저조건 확인하기 위해 debuging) 
+	//cout << start << ' ' << end << "\n";  (To check the base condition --> debuging) 
 
 	if (start == end) {
 		return true;
+	}
+	else if (start + 1 == end) { //2 3 
+		if (s[start] == s[end])
+			return true;
+		else
+			return false;
 	}
 	else {
 		if (s[start] == s[end]) {
