@@ -3,7 +3,7 @@
 using namespace std;
 
 bool isPalindrome(char s[], int start, int end) {
-	// if s[] is from the start to the end of a palindrome == true,  else == false
+	// if s[] is palindrome from start to the end == true,  else == false
 
 	//cout << start << ' ' << end << "\n";  (To check the base condition --> debuging) 
 
