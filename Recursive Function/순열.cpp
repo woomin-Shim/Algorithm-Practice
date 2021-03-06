@@ -4,7 +4,7 @@ int n, r;
 char alpha[100];
 bool TF[100];
 
-void getResult(int x) {
+void getResult(int x) {  //'x'th Loop
     if (x >= r) {
         cout << alpha << '\n';
     }
