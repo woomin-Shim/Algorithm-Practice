@@ -37,7 +37,7 @@ int find(int vertex) {   //parent node를 찾는 함수 , 붕괴법칙 사용 x
 	}
 }
                                
-void do_union(int v1, int v2) {  // 0  3  
+void set_union(int v1, int v2) {  // 0  3  
 	if (v1 > v2) {
 		int temp = v1;
 		v1 = v2;
@@ -51,17 +51,17 @@ void do_union(int v1, int v2) {  // 0  3
 		parent[v2] = v1;  //정점 v2 node는 정점v1을 부모로 가짐 
 	}
 	else {  //정점 v2 배열이 더 많은 원소를 가질 때 
-		//-2   -4
+		//1   -1
 		//int temp = parent[v1];
 		parent[v2] += parent[v1];  
 		parent[v1] = v2;
 	}
 }
 
-void set_Edge(int* Graph, int n) {
+void set_Edge(int n) { //비용인접행렬에서 유효한 값들만 대상으로 edge_set(배열)를 만듬 
 	int idx = 0;
-	for (int i = 0; i < 9; i++) {
-		for (int j = 0; j < 9; j++) {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
 			if (graph[i][j] != -1) {  //가중치가 유효한 값이라면
 				edge_set[idx].weight = graph[i][j];  //가중치 
 				edge_set[idx].v1 = i;   //정점 1
@@ -75,6 +75,6 @@ void set_Edge(int* Graph, int n) {
 
 
 int main(void) {
-	set_Edge(graph, 9);
+	set_Edge(9);
 
 }
