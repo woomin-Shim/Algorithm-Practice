@@ -21,77 +21,95 @@ typedef struct edge {  //간선 집합을 위한 구조체
 }Edge;
 
 int parent[MAX];  //vertex의 최대 개수는 100개까지 가능, input_graph의 경우 vertex=9
-int count[MAX]; //각 노드 집합의 개수를 따로 저장하기 위한 배열 
 Edge edge_set[MAX];  //유효한 간선만 저장하기 위해 Edge구조체를 배열로 선언
 
 void init_set(int n) {  //노드들을 초기 상태로 setting
 	int i;
 	for (i = 0; i < n; i++) {
 		parent[i] = -1;  //parent 배열을 -1(root node)로 초기화
-		count[i] = 1;  //초기의 노드 집합은 모두 1개로 구성 
+		
 	}
 }
 
-/*
+
 int find(int vertex) {   //parent node를 찾는 함수 , 붕괴법칙 사용 x 
 	if (parent[vertex] < 0) {  //based condition
 		return parent[vertex];
 	}
 	else {
-		return parent[vertex] = find(parent[vertex]);
+		return find(parent[vertex]);
 	}
 }  
-*/
 
+/*
 int find(int vertex) {
 	int p, s, i = 0;
 	for (i = vertex; (p = parent[i]) > 0; i = p)
 		;
 	s = i;
 	return s;
-}  
+}    */
                                
-void set_union(int v1, int v2) {  // 0  3  
-	/*if (v1 > v2) {
-		int temp = v1;
-		v1 = v2;
-		v2 = temp;
-	} */
-	if ((parent[v1] < 0) && (parent[v2] <  0)) {  //부모 노드가 초기 노드(-1)이라면 
-		if (count[v1] < count[v2]) {
-			parent[v1] = v2;
-			count[v2] += count[v1];
-			
+void set_union(int v1, int v2) {   
+	printf("%d\n", parent[8]);
+	printf("%d  %d\n", v1, v2);
+	printf("%d  %d\n", parent[v1], parent[v2]);
+	if ((parent[v1] < 0 && parent[v2] <  0)) {  //부모 노드가 초기 노드(-1)이라면 
+		if (parent[v1] <= parent[v2]) {
+			parent[v1] += parent[v2];
+			parent[v2] = v1;
 		}
 		else {
-			parent[v2] = v1;
-			count[v1] += count[v2];
-			
+			parent[v2] += parent[v1];
+			parent[v1] = v2;
 		}
+		printf("xxxx\n");
 	}
-	else if ((parent[v1] > 0) && (parent[v2] < 0)) { // 정점 v1 집합이 루트 노드가 아닐때
-		count[v1] += count[parent[v1]]; //집합에 속한 노드의 개수를 모두 더한다
-		if (count[v1] < count[v2]) {
-			parent[v1] = v2;
-			count[v2] += count[v1];
-		}
-		else {
+	else if ((parent[v1] >= 0) && (parent[v2] < 0)) { // 정점 v1 집합이 루트 노드가 아닐때
+		int p1, p2;
+		
+		p1 = find(v1);   // 정점 v1이 속한 루트 노드를 찾음 
+		p2 = parent[v2];
+		printf("%d %d\n", p1, p2);
+		if (p1 <= p2) {  //음수니까 반대로 
+			parent[parent[parent[v1]]] += parent[v2];
 			parent[v2] = v1;
-			count[v1] += count[v2];
+		}
+		else {   // (p1 > p2) 
+			parent[parent[v2]] += parent[v1];
+			parent[v1] = v2;
 		}
 	}
 
-	else if ((parent[v1] < 0) && (parent[v2] )) {
-		count[v2] += count[6]; //집합에 속한 노드의 개수를 모두 더한다
-		if (count[v1] < count[v2]) {
+	else if ((parent[v1] < 0) && (parent[v2] >= 0)) { // 정점 v1 집합이 루트 노드가 아닐때
+		int p1, p2;
+		p2 = find(v2) ;   // 정점 v1이 속한 루트 노드를 찾음 
+		printf("%d\n", p2);
+		p1 = parent[v1];
+		if (p2 <= p1) {
+			parent[parent[v2]] += parent[v1];
 			parent[v1] = v2;
-			count[v2] += count[v1];
 		}
 		else {
+			parent[parent[v1]] += parent[v2];
 			parent[v2] = v1;
-			count[v1] += count[v2];
 		}
 	}
+
+	else if((parent[v1] >= 0) && (parent[v2] >= 0)) {
+		int p1 = find(v1);
+		int p2 = find(v2);
+		if (p2 <= p1) {
+			parent[parent[parent[v2]]] += parent[parent[v1]];
+			parent[parent[v1]] = v2;
+		}
+		else {
+			parent[parent[v1]] += parent[v2];
+			parent[v2] = v1;
+		}
+	}
+
+	
 	
 
 
@@ -115,10 +133,7 @@ void set_union(int v1, int v2) {  // 0  3
 		printf("%3d", parent[i]);
 	}
 	printf("\n");
-	for (int i = 0; i < 9; i++) {
-		printf("%3d", count[i]);
 
-	}
 	printf("\n");
 }
 
@@ -159,7 +174,7 @@ void kruskal(int n, int edge_count) {  //minimum Spanning Tree 함수, 최소 비용을
 		int y = find(edge_set[i].v2);
 		printf("%d : %d, %d : %d\n", edge_set[i].v1, x, edge_set[i].v2, y);
 
-		if ((x < 0 && y < 0) || x != y) {
+		if ((x == -1 && y == -1) || x != y) {
 			printf("간선 (%d, %d) 추가\n", edge_set[i].v1, edge_set[i].v2);
 			mst_e += edge_set[i].weight;
 			mst_e_count++;
