@@ -7,10 +7,10 @@ int graph[9][9] = { {0, 4, -1, -1, -1, -1, -1, 8, -1},
 					{4, 0, 8, -1, -1, -1, -1, 11, -1},
 					{-1, 8, 0, 7, -1, 4, -1, -1, 2},
 					{-1, -1, 7, 0, 9, 14, -1, -1, -1},
-					{-1, -1, -1, 9, 0, 10, -1, -1, -1},
+                    {-1, -1, -1, 9, 0, 10, -1, -1, -1},
 	                {-1, -1, 4, 14, 10, 0, 2, -1, -1},
-					{-1, -1, -1, -1, -1, 2, 0, 1, 6},
-					{8, 11, -1, -1, -1, -1, 1, 0, 7},
+                    {-1, -1, -1, -1, -1, 2, 0, 1, 6},
+                    {8, 11, -1, -1, -1, -1, 1, 0, 7},
 					{-1, -1, 2, -1, -1, -1, 6, 7, 0},
 };
 
@@ -21,30 +21,35 @@ typedef struct edge {  //간선 집합을 위한 구조체
 }Edge;
 
 int parent[MAX];  //vertex의 최대 개수는 100개까지 가능, input_graph의 경우 vertex=9
+int count[MAX]; //각 노드 집합의 개수를 따로 저장하기 위한 배열 
 Edge edge_set[MAX];  //유효한 간선만 저장하기 위해 Edge구조체를 배열로 선언
 
-void init_set(int n) {  //parent 배열을 -1(root node)로 초기화
+void init_set(int n) {  //노드들을 초기 상태로 setting
 	int i;
-	for(i = 0; i < n; i++)
-		parent[i] = -1;
+	for (i = 0; i < n; i++) {
+		parent[i] = -1;  //parent 배열을 -1(root node)로 초기화
+		count[i] = 1;  //초기의 노드 집합은 모두 1개로 구성 
+	}
 }
 
+/*
 int find(int vertex) {   //parent node를 찾는 함수 , 붕괴법칙 사용 x 
-	if (parent[vertex] <= 0) {  //based condition
+	if (parent[vertex] < 0) {  //based condition
 		return parent[vertex];
 	}
 	else {
 		return parent[vertex] = find(parent[vertex]);
 	}
-}   
+}  
+*/
 
-/*int find(int vertex) {
+int find(int vertex) {
 	int p, s, i = 0;
-	for (i = vertex; (p = parent[i]) >= 0; i = p)
+	for (i = vertex; (p = parent[i]) > 0; i = p)
 		;
 	s = i;
-	return parent[vertex];
-}  */
+	return s;
+}  
                                
 void set_union(int v1, int v2) {  // 0  3  
 	/*if (v1 > v2) {
@@ -52,7 +57,46 @@ void set_union(int v1, int v2) {  // 0  3
 		v1 = v2;
 		v2 = temp;
 	} */
+	if ((parent[v1] < 0) && (parent[v2] <  0)) {  //부모 노드가 초기 노드(-1)이라면 
+		if (count[v1] < count[v2]) {
+			parent[v1] = v2;
+			count[v2] += count[v1];
+			
+		}
+		else {
+			parent[v2] = v1;
+			count[v1] += count[v2];
+			
+		}
+	}
+	else if ((parent[v1] > 0) && (parent[v2] < 0)) { // 정점 v1 집합이 루트 노드가 아닐때
+		count[v1] += count[parent[v1]]; //집합에 속한 노드의 개수를 모두 더한다
+		if (count[v1] < count[v2]) {
+			parent[v1] = v2;
+			count[v2] += count[v1];
+		}
+		else {
+			parent[v2] = v1;
+			count[v1] += count[v2];
+		}
+	}
 
+	else if ((parent[v1] < 0) && (parent[v2] )) {
+		count[v2] += count[6]; //집합에 속한 노드의 개수를 모두 더한다
+		if (count[v1] < count[v2]) {
+			parent[v1] = v2;
+			count[v2] += count[v1];
+		}
+		else {
+			parent[v2] = v1;
+			count[v1] += count[v2];
+		}
+	}
+	
+
+
+
+	/*
 	if (parent[v1] <= parent[v2]) {  //정점 v1 배열이 더 많은 원소를 가질 때(음수니까 반대로)
 		//-4   -2
 		//int temp = parent[v2];  //parent[v2] 값 임시 저장
@@ -65,9 +109,15 @@ void set_union(int v1, int v2) {  // 0  3
 		parent[v2] += parent[v1];  
 		parent[v1] = v2;
 	}
+	*/
+
 	for (int i = 0; i < 9; i++) {
 		printf("%3d", parent[i]);
-		
+	}
+	printf("\n");
+	for (int i = 0; i < 9; i++) {
+		printf("%3d", count[i]);
+
 	}
 	printf("\n");
 }
