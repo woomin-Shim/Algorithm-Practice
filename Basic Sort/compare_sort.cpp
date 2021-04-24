@@ -33,7 +33,7 @@ void merge(int list[], int low, int mid, int high) {
 
 }
 
-void merge_sort(int list[], int low, int high) {  
+void merge_sort(int list[], int low, int high) {
 	int middle;
 	if (low < high) {
 		middle = (low + high) / 2;  //mid index
@@ -43,92 +43,85 @@ void merge_sort(int list[], int low, int high) {
 	}
 }
 
+/*
 //call by reference 
-void swap(int *a, int *b) {
+void swap(int* a, int* b) {
 	int tmp;
 	tmp = *a;
 	*a = *b;
 	*b = tmp;
 }
+*/
 
 int partition(int list[], int low, int high) {
 	int pivot = low;  //맨 처음 값을 pivot으로 setting
 	int left = low, right = high;
 
 	while (left < right) {  //두 값이 겹치면 while loop 종료
-		while (list[left] <= list[pivot] && left<=high)  //피봇값보다 크면 stop 
+		while (list[left] <= list[pivot] && left <= high)  //피봇값보다 크면 stop 
 			left++;
 		while (list[right] > list[pivot])  //피봇값보다 작거나 같으면 stop 
 			right--;
 		if (left < right) {
 			//swap(&list[left], &list[right]);
+
+			//list[left] 와 list[right] swap
 			int tmp = list[left];
 			list[left] = list[right];
 			list[right] = tmp;
+			
 		}
 	}
 	//swap(&list[pivot], &list[right]);
+	
+	//list[pivot] 과 list[right] swap
 	int tmp = list[pivot];
 	list[pivot] = list[right];
 	list[right] = tmp;
-	return right;
+	
+	return right;  //return pivot index 
 }
 
+//execute quickSort 
 void quick_sort(int list[], int low, int high) {
-	if (low < high) {
+	if (low < high) {  //elements가 두 개이상일 경우 
 		int pivot = partition(list, low, high);
-		quick_sort(list, low, pivot - 1);
+		quick_sort(list, low, pivot - 1);  
 		quick_sort(list, pivot + 1, high);
 	}
 }
 
 int main() {
 	int arr[MAX_SIZE], arr2[MAX_SIZE];   //merge_sort, quick_sort를 위한 배열 
-	
-
-	srand(time(NULL));  //랜덤 생성을 위한 SEED
 	clock_t start, end;
 	double t1 = 0.0, t2 = 0.0;  //merge_sort, quick_sort 측정 시간 변수
 
+	srand(time(NULL));  //랜덤 생성을 위한 SEED
+
 	//평균시간 구하기 위해 10번을 반복 
-	for (int k = 0; k < 10; k++) {  
+	for (int k = 0; k < 10; k++) {
 		//랜덤 넘버 생성 
 		for (int i = 0; i < MAX_SIZE; i++) {
-			arr[i] = arr2[i] = rand() % 99999 + 1; // 1~99999 random 
+			arr[i] = arr2[i] = rand() % 9999 + 1; // 1~9999 random 
 		}
-		for (int i = 0; i < 30; i++) {
-			cout << arr[i] << " ";
-		}
-		cout << "\n";
-		for (int i = 0; i < 30; i++) {
-			cout << arr2[i] << " ";
-		}
-		cout << "\n";
-
 
 		//merge_sort 측정
 		start = clock();
 		merge_sort(arr, 0, MAX_SIZE - 1);
 		end = clock();
-		for (int i = 0; i < 30; i++) {
-			cout << arr[i] << ' ';
-		}
-		cout << '\n';
+
 		t1 += (double)(end - start) / CLOCKS_PER_SEC;
 
 		//quick_sort 측정
 		start = clock();
 		quick_sort(arr2, 0, MAX_SIZE - 1);
 		end = clock();
-		for (int i = 0; i < 30; i++) {
-			cout << arr2[i] << " ";
-		}
-		cout << "\n";
+
 		t2 += (double)(end - start) / CLOCKS_PER_SEC;
 
 	}
-	cout << "MergeSort의 측정 시간 : " << t1/10 << '\n';
-	cout << "QuickSort의 측정 시간 : " << t2/10 << '\n';
+	cout << "MergeSort의 측정 시간 : " << t1 / 10 << '\n';
+	cout << "QuickSort의 측정 시간 : " << t2 / 10 << '\n';
 
-	return 0; 
+	return 0;
 }
