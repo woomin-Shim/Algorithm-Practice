@@ -1,10 +1,11 @@
 #include <iostream>
 #include <time.h>
 using namespace std;
-#define MAX_SIZE 15000
+#define MAX_SIZE 51000
 
 //execute insertion_sort
-void insertion_sort(int list[], int length) {
+void insertion_sort(int list[], int low, int high) {
+	int length = high - low + 1;
 	for (int i = 1; i < length; i++) {
 		for (int j = i; j > 0; j--) {
 			//원소들을 비교하면서 작은 값이 나오면 swap 
@@ -13,7 +14,7 @@ void insertion_sort(int list[], int length) {
 				list[j] = list[j - 1];
 				list[j - 1] = tmp;
 			}
-			else break;  //크다면 앞에는 이미 정렬된 상태이기 때문에 반복 필요 x
+			//else break;  //크다면 앞에는 이미 정렬된 상태이기 때문에 반복 필요 x
 		}
 	}
 }
@@ -28,6 +29,7 @@ int partition(int list[], int low, int high) {
 			left++;
 		while (list[right] > list[pivot])  //피봇값보다 작거나 같으면 stop 
 			right--;
+
 		if (left < right) {
 			//list[left] 와 list[right] swap
 			int tmp = list[left];
@@ -35,18 +37,18 @@ int partition(int list[], int low, int high) {
 			list[right] = tmp;
 		}
 	}
+
 	//list[pivot] 과 list[right] swap
 	int tmp = list[pivot];
 	list[pivot] = list[right];
 	list[right] = tmp;
-
 	return right;  //return pivot index 
 }
 
 //execute basic quicksort
 void quickSort_basic(int list[], int start, int end) {
 	if (start <= end) {
-		int pivot_pos = partition(list, start, end);  //오른쪽 partition의 first index
+		int pivot_pos = partition(list, start, end);  
 		quickSort_basic(list, start, pivot_pos - 1);
 		quickSort_basic(list, pivot_pos + 1, end);
 	}
@@ -54,70 +56,72 @@ void quickSort_basic(int list[], int start, int end) {
 
 //execute quickSort 
 void quick_sort(int list[], int low, int high, int Threshold) {
-	int cnt = high - low + 1;    //A count of elements  --->  THRESHOLD
+	int cnt = high - low + 1;    //A count of elements
 
-	if (low < high) {
-		if (cnt <= Threshold) {  //임계값보다 낮거나 같으면 insertion_sort 수행 
-			insertion_sort(list, cnt);
+	while(1) {  // break 걸어주기 위해 무한 loop 돌림 
+
+		//원소의 개수가 Threshold 보다 적으면 insertion_sort 후 종료(더 이상 정렬할 값 x) 
+		if (cnt <= Threshold) { 
+			insertion_sort(list, low, high);
+			break;
 		}
-
-		else {
+		else {  //임계값보다 크면 recursive 
 			int pivot = partition(list, low, high);
-			//if (low < pivot - 1)  //left partition elements가 두 개 이상일 경우
-				quick_sort(list, low, pivot - 1, Threshold);
-			//if (pivot + 1 < high)  //right partition elements가 두 개 이상일 경우
-				quick_sort(list, pivot + 1, high, Threshold);
+			quick_sort(list, low, pivot - 1, Threshold);
+			quick_sort(list, pivot + 1, high, Threshold);
+			break;  //break 안 걸어주면 무한loop(?)
 		}
 	}
-	
 }
 
 int main() {
 	int arr[MAX_SIZE], arr2[MAX_SIZE], arr3[MAX_SIZE], arr4[MAX_SIZE], arr5[MAX_SIZE];
 	clock_t start, end;
-	double t1, t2, t3, t4, t5;
+	double t1=0.0, t2=0.0, t3=0.0, t4=0.0, t5=0.0;
 
 	srand(time(NULL));
+	for (int k = 0; k < 10; k++) {  //everage를 구하기 위해 10번 반복 
 
-	for (int i = 0; i < MAX_SIZE; i++) {
-		arr[i] = arr2[i] =arr3[i] = arr4[i] = arr5[i] = rand() % 9999 + 1;
+		//각 배열에 같은 랜덤 넘버 생성시킴 
+		for (int i = 0; i < MAX_SIZE; i++) {
+			arr[i] = arr2[i] = arr3[i] = arr4[i] = arr5[i] = rand() % 9999 + 1;
+		}
+
+		//임계값을 각자 다르게 주고 변수에 실행 시간 저장 
+		start = clock();
+		quick_sort(arr, 0, MAX_SIZE - 1, 10);
+		end = clock();
+		t1 += (double)(end - start) / CLOCKS_PER_SEC;
+
+		//THRESHOLD = 25
+		start = clock();
+		quick_sort(arr2, 0, MAX_SIZE - 1, 25);
+		end = clock();
+		t2 += (double)(end - start) / CLOCKS_PER_SEC;
+
+		//THRESHOLD = 50
+		start = clock();
+		quick_sort(arr3, 0, MAX_SIZE - 1, 50);
+		end = clock();
+		t3 += (double)(end - start) / CLOCKS_PER_SEC;
+
+		//THRESHOLD = 200
+		start = clock();
+		quick_sort(arr4, 0, MAX_SIZE - 1, 200);
+		end = clock();
+		t4 += (double)(end - start) / CLOCKS_PER_SEC;
+
+		start = clock();
+		quickSort_basic(arr5, 0, MAX_SIZE - 1);
+		end = clock();
+		t5 += (double)(end - start) / CLOCKS_PER_SEC;
 	}
+
+	cout << "THRESHOLD를 10으로 설정하였을 떄의 실행 시간 : " << t1/10 <<'\n';
+	cout << "THRESHOLD를 25로 설정하였을 떄의 실행 시간 : " << t2/10 << '\n';   
+	cout << "THRESHOLD를 50으로 설정하였을 떄의 실행 시간 : " << t3/10 << '\n';
+	cout << "THRESHOLD를 200으로 설정하였을 떄의 실행 시간 : " << t4/10<< '\n';
+	cout << "원래의 퀵 정렬 실행 시간 : " << t5/10 << '\n';
 	
-	
-	start = clock();
-	quick_sort(arr, 0, MAX_SIZE - 1, 10);
-	end = clock();
-	t1 = (double)(end - start) / CLOCKS_PER_SEC;
-	for (int i = 0; i < 50; i++) {
-		cout << arr[i] << ' ';
-	}
-	cout << '\n';
-
-	start = clock();
-	quick_sort(arr2, 0, MAX_SIZE - 1, 100);
-	end = clock();
-	t2 = (double)(end - start) / CLOCKS_PER_SEC;
-
-   
-	start = clock();
-	quick_sort(arr3, 0, MAX_SIZE - 1, 1000);
-	end = clock();
-	t3 = (double)(end - start) / CLOCKS_PER_SEC;
-
-	start = clock();
-	quick_sort(arr4, 0, MAX_SIZE - 1, 10000);
-	end = clock();
-	t4 = (double)(end - start) / CLOCKS_PER_SEC;
-
-	start = clock();
-	quickSort_basic(arr4, 0, MAX_SIZE - 1);
-	end = clock();
-	t5 = (double)(end - start) / CLOCKS_PER_SEC;
-
-	cout << "THRESHOLD를 10으로 설정하였을 떄의 실행 시간 : " << t1 <<'\n';
-	cout << "THRESHOLD를 100으로 설정하였을 떄의 실행 시간 : " << t2 << '\n';   
-	cout << "THRESHOLD를 1000으로 설정하였을 떄의 실행 시간 : " << t3 << '\n';
-	cout << "THRESHOLD를 10000으로 설정하였을 떄의 실행 시간 : " << t4 << '\n';
-	cout << "원래의 퀵 정렬 실행 시간 : " << t5 << '\n';
 	return 0;
 }
