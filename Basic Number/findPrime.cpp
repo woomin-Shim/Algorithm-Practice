@@ -14,14 +14,15 @@ int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0);
 
-	int n, num, cnt=0;
+	int n, num, cnt = 0;
 	cin >> n;
+	int i = 1;
 
 	while (n--) {
-		cin >> num;
-		if(isPrime(num)) {
-				cnt++;
-		}		
+		if (isPrime(i)) {
+			cnt++;
+		}
+		i++;
 	}
 	cout << cnt;
 }
