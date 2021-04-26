@@ -1,44 +1,44 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include <time.h>
 using namespace std;
 #define MAX_SIZE 51000
 
 //execute insertion_sort
-void insertion_sort(int list[], int low, int high) {
-	int length = high - low + 1;
+void insertion_sort(int list[], int length) {
+	
 	for (int i = 1; i < length; i++) {
 		for (int j = i; j > 0; j--) {
-			//¿ø¼ÒµéÀ» ºñ±³ÇÏ¸é¼­ ÀÛÀº °ªÀÌ ³ª¿À¸é swap 
+			//ì›ì†Œë“¤ì„ ë¹„êµí•˜ë©´ì„œ ì‘ì€ ê°’ì´ ë‚˜ì˜¤ë©´ swap 
 			if (list[j] < list[j - 1]) {
 				int tmp = list[j];
 				list[j] = list[j - 1];
 				list[j - 1] = tmp;
 			}
-			//else break;  //Å©´Ù¸é ¾Õ¿¡´Â ÀÌ¹Ì Á¤·ÄµÈ »óÅÂÀÌ±â ¶§¹®¿¡ ¹İº¹ ÇÊ¿ä x
+			else break;  //í¬ë‹¤ë©´ ì•ì—ëŠ” ì´ë¯¸ ì •ë ¬ëœ ìƒíƒœì´ê¸° ë•Œë¬¸ì— ë°˜ë³µ í•„ìš” x
 		}
 	}
 }
 
 
 int partition(int list[], int low, int high) {
-	int pivot = low;  //¸Ç Ã³À½ °ªÀ» pivotÀ¸·Î setting
+	int pivot = low;  //ë§¨ ì²˜ìŒ ê°’ì„ pivotìœ¼ë¡œ setting
 	int left = low, right = high;
 
-	while (left < right) {  //µÎ °ªÀÌ °ãÄ¡¸é while loop Á¾·á
-		while (list[left] <= list[pivot] && left <= high)  //ÇÇº¿°ªº¸´Ù Å©¸é stop 
+	while (left < right) {  //ë‘ ê°’ì´ ê²¹ì¹˜ë©´ while loop ì¢…ë£Œ
+		while (list[left] <= list[pivot] && left <= high)  //í”¼ë´‡ê°’ë³´ë‹¤ í¬ë©´ stop 
 			left++;
-		while (list[right] > list[pivot])  //ÇÇº¿°ªº¸´Ù ÀÛ°Å³ª °°À¸¸é stop 
+		while (list[right] > list[pivot])  //í”¼ë´‡ê°’ë³´ë‹¤ ì‘ê±°ë‚˜ ê°™ìœ¼ë©´ stop 
 			right--;
 
 		if (left < right) {
-			//list[left] ¿Í list[right] swap
+			//list[left] ì™€ list[right] swap
 			int tmp = list[left];
 			list[left] = list[right];
 			list[right] = tmp;
 		}
 	}
 
-	//list[pivot] °ú list[right] swap
+	//list[pivot] ê³¼ list[right] swap
 	int tmp = list[pivot];
 	list[pivot] = list[right];
 	list[right] = tmp;
@@ -48,7 +48,7 @@ int partition(int list[], int low, int high) {
 //execute basic quicksort
 void quickSort_basic(int list[], int start, int end) {
 	if (start <= end) {
-		int pivot_pos = partition(list, start, end);  
+		int pivot_pos = partition(list, start, end);
 		quickSort_basic(list, start, pivot_pos - 1);
 		quickSort_basic(list, pivot_pos + 1, end);
 	}
@@ -58,18 +58,17 @@ void quickSort_basic(int list[], int start, int end) {
 void quick_sort(int list[], int low, int high, int Threshold) {
 	int cnt = high - low + 1;    //A count of elements
 
-	while(1) {  // break °É¾îÁÖ±â À§ÇØ ¹«ÇÑ loop µ¹¸² 
+	if (low < high) {  //based condition
 
-		//¿ø¼ÒÀÇ °³¼ö°¡ Threshold º¸´Ù ÀûÀ¸¸é insertion_sort ÈÄ Á¾·á(´õ ÀÌ»ó Á¤·ÄÇÒ °ª x) 
-		if (cnt <= Threshold) { 
-			insertion_sort(list, low, high);
-			break;
+		//ì›ì†Œì˜ ê°œìˆ˜ê°€ Threshold ì´í•˜ì´ë©´ insertion_sort í›„ ì¢…ë£Œ(ë” ì´ìƒ ì •ë ¬í•  ê°’ x) 
+		if (cnt <= Threshold) {
+			insertion_sort(list, cnt);
+			return;  //insertion_sortê°€ í˜¸ì¶œ ë˜ê³  ë‚˜ì„œëŠ” loop ëŒì•„ê°€ í•„ìš” X
 		}
-		else {  //ÀÓ°è°ªº¸´Ù Å©¸é recursive 
+		else {  //ì„ê³„ê°’ë³´ë‹¤ í¬ë©´ recursive 
 			int pivot = partition(list, low, high);
 			quick_sort(list, low, pivot - 1, Threshold);
 			quick_sort(list, pivot + 1, high, Threshold);
-			break;  //break ¾È °É¾îÁÖ¸é ¹«ÇÑloop(?)
 		}
 	}
 }
@@ -77,37 +76,37 @@ void quick_sort(int list[], int low, int high, int Threshold) {
 int main() {
 	int arr[MAX_SIZE], arr2[MAX_SIZE], arr3[MAX_SIZE], arr4[MAX_SIZE], arr5[MAX_SIZE];
 	clock_t start, end;
-	double t1=0.0, t2=0.0, t3=0.0, t4=0.0, t5=0.0;
+	double t1 = 0.0, t2 = 0.0, t3 = 0.0, t4 = 0.0, t5 = 0.0;
 
 	srand(time(NULL));
-	for (int k = 0; k < 10; k++) {  //everage¸¦ ±¸ÇÏ±â À§ÇØ 10¹ø ¹İº¹ 
+	for (int k = 0; k < 10; k++) {  //everageë¥¼ êµ¬í•˜ê¸° ìœ„í•´ 10ë²ˆ ë°˜ë³µ 
 
-		//°¢ ¹è¿­¿¡ °°Àº ·£´ı ³Ñ¹ö »ı¼º½ÃÅ´ 
+		//ê° ë°°ì—´ì— ê°™ì€ ëœë¤ ë„˜ë²„ ìƒì„±ì‹œí‚´ 
 		for (int i = 0; i < MAX_SIZE; i++) {
 			arr[i] = arr2[i] = arr3[i] = arr4[i] = arr5[i] = rand() % 9999 + 1;
 		}
 
-		//ÀÓ°è°ªÀ» °¢ÀÚ ´Ù¸£°Ô ÁÖ°í º¯¼ö¿¡ ½ÇÇà ½Ã°£ ÀúÀå 
+		//ì„ê³„ê°’ì„ ê°ì ë‹¤ë¥´ê²Œ ì£¼ê³  ë³€ìˆ˜ì— ì‹¤í–‰ ì‹œê°„ ì €ì¥ 
 		start = clock();
 		quick_sort(arr, 0, MAX_SIZE - 1, 10);
 		end = clock();
 		t1 += (double)(end - start) / CLOCKS_PER_SEC;
 
-		//THRESHOLD = 25
+		//THRESHOLD = 100
 		start = clock();
-		quick_sort(arr2, 0, MAX_SIZE - 1, 25);
+		quick_sort(arr2, 0, MAX_SIZE - 1, 100);
 		end = clock();
 		t2 += (double)(end - start) / CLOCKS_PER_SEC;
 
-		//THRESHOLD = 50
+		//THRESHOLD = 1000
 		start = clock();
-		quick_sort(arr3, 0, MAX_SIZE - 1, 50);
+		quick_sort(arr3, 0, MAX_SIZE - 1, 1000);
 		end = clock();
 		t3 += (double)(end - start) / CLOCKS_PER_SEC;
 
-		//THRESHOLD = 200
+		//THRESHOLD = 10000
 		start = clock();
-		quick_sort(arr4, 0, MAX_SIZE - 1, 200);
+		quick_sort(arr4, 0, MAX_SIZE - 1, 10000);
 		end = clock();
 		t4 += (double)(end - start) / CLOCKS_PER_SEC;
 
@@ -117,11 +116,12 @@ int main() {
 		t5 += (double)(end - start) / CLOCKS_PER_SEC;
 	}
 
-	cout << "THRESHOLD¸¦ 10À¸·Î ¼³Á¤ÇÏ¿´À» ‹šÀÇ ½ÇÇà ½Ã°£ : " << t1/10 <<'\n';
-	cout << "THRESHOLD¸¦ 25·Î ¼³Á¤ÇÏ¿´À» ‹šÀÇ ½ÇÇà ½Ã°£ : " << t2/10 << '\n';   
-	cout << "THRESHOLD¸¦ 50À¸·Î ¼³Á¤ÇÏ¿´À» ‹šÀÇ ½ÇÇà ½Ã°£ : " << t3/10 << '\n';
-	cout << "THRESHOLD¸¦ 200À¸·Î ¼³Á¤ÇÏ¿´À» ‹šÀÇ ½ÇÇà ½Ã°£ : " << t4/10<< '\n';
-	cout << "¿ø·¡ÀÇ Äü Á¤·Ä ½ÇÇà ½Ã°£ : " << t5/10 << '\n';
-	
+	cout << "ì„ê³„ê°’ì— ë”°ë¥¸ ì‹¤í–‰ ì‹œê°„" << '\n';
+	cout << "THRESHOLD 10 : " << t1/10 << '\n';
+	cout << "THRESHOLD 100 : " << t2/10 << '\n';
+	cout << "THRESHOLD 1000 : " << t3/10 << '\n';
+	cout << "THRESHOLD 10000 : " << t4/10 << '\n';
+	cout << "ì›ë˜ì˜ í€µ ì •ë ¬ ì‹¤í–‰ ì‹œê°„ : " << t5/10 << '\n';
+
 	return 0;
 }
